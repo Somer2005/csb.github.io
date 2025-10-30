@@ -10,7 +10,7 @@ theme:
         name: 关闭自动模式
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: SteelBlue
+      primary: blue grey
       accent: blue
       toggle:
         icon: material/toggle-switch
@@ -42,11 +42,10 @@ repo_url: https://github.com/Somer2005/csb.github.io
 repo_name: csb.github.io
 
 nav:
-  - 导言页: index.md
+  - 首页: index.md
   - 项目笔记:
-      - 搜广推项目——阿里移动推荐: project/project1.md
-  - 算法笔记:
-      - 哈希表笔记: algorithm/hashtable.md
+      - 第一篇文章: blog/post1.md
+  - 算法笔记：
 
 
 plugins:
@@ -64,5 +63,5 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
-  - assets/stylesheets/custom.css
+  - stylesheets/extra.css
   - https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css

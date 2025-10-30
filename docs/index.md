@@ -1,17 +1,17 @@
-# Welcome to MkDocs
+# 欢迎访问我的个人博客
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+由于这个博客刚建，我也没学过啥前端知识，所以首页优化还是等我有空再说吧……
 
-## Commands
+这个博客大概会包含如下的内容：
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## 实习笔记 
+记录一些面经，同时也谈一些实习的心得与收获。
 
-## Project layout
+## 项目笔记 
+记录做项目的思路与记忆。
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## 数学与课程笔记
+我还是觉得无论做任何事数理基础都是相当重要的一环。因此这个地方主要记录数学和物理的笔记。
+
+## 算法笔记
+做完一类算法就要总结一类，这个部分就是为了总结的。
