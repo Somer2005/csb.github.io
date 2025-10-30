@@ -44,6 +44,7 @@ repo_name: csb.github.io
 nav:
   - 导言页: index.md
   - 项目笔记:
+      - 特殊篇——git的基础使用: project/git.md
       - 搜广推项目——阿里移动推荐: project/project1.md
   - 算法笔记:
       - 哈希表笔记: algorithm/hashtable.md
