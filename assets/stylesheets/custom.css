@@ -1,0 +1,13 @@
+/* ===== 标题黑体化配置 ===== */
+
+/* 一级至六级标题：加粗、纯黑、使用自定义字体 */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: 'LXGW WenKai', 'Noto Sans SC', sans-serif; /* 黑体中文风格 */
+  font-weight: 800; /* 更粗 */
+  color: #000000 !important; /* 强制纯黑 */
+}
