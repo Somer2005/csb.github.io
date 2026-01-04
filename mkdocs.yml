@@ -48,7 +48,10 @@ nav:
       - 搜广推项目——阿里移动推荐: project/project1.md
   - 算法笔记:
       - 哈希表笔记: algorithm/hashtable.md
-
+  - 公开课笔记:
+      - MIT6.824: MIT6.824/Mapreduce.md
+  - 一生一芯笔记:
+      - PA系列: ysyx/PA0.md
 
 plugins:
   - search
