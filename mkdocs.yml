@@ -47,11 +47,25 @@ nav:
       - 特殊篇——git的基础使用: project/git.md
       - 搜广推项目——阿里移动推荐: project/project1.md
   - 算法笔记:
+      - 线性规划:
+        - 基础: algorithm/OperationResearch/LinearProgramming.md
+        - 线性规划的花活: algorithm/OperationResearch/LinearProgramming2.md
+      - 运输问题: algorithm/OperationResearch/TransportationModel.md
+      - 目标规划: algorithm/OperationResearch/GoalPlanning.md
+      - 整数规划: algorithm/OperationResearch/IntegerProgramming.md
+      - 网络计划: algorithm/OperationResearch/NetworkPlanning.md
+      - 存储论: algorithm/OperationResearch/Store.md
+      - 博弈论: algorithm/OperationResearch/GameTheory.md
+      - 对策分析: algorithm/OperationResearch/PlanAnalysis.md
+
       - 哈希表笔记: algorithm/hashtable.md
+  - 英语笔记:
+      - IELTS作文的三个万能论据: project/IELTSWriting.md
   - 公开课笔记:
       - MIT6.824: MIT6.824/Mapreduce.md
   - 一生一芯笔记:
       - PA系列: ysyx/PA0.md
+      - F3 数电: ysyx/electric.md
 
 plugins:
   - search
