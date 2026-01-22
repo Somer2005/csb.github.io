@@ -34,7 +34,7 @@ jobs:
         run: pnpm run sync
 
       - name: Build Astro
-        run: pnpm run build --verbose
+        run: pnpm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
