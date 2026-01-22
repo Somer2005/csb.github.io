@@ -34,7 +34,7 @@ export const theme: ThemeUserConfig = {
     ]
   },
   footer: {
-    year: ' 2026',
+    year: \ \\,
     links: [
       {
         title: 'Site Policy',
@@ -47,7 +47,7 @@ export const theme: ThemeUserConfig = {
   },
   content: {
     externalLinks: {
-      content: ' ',
+      content: '',
       properties: {
         style: 'user-select:none'
       }
@@ -71,7 +71,7 @@ export const integ: IntegrationUserConfig = {
   pagefind: true,
   quote: {
     server: 'https://dummyjson.com/quotes/random',
-    target: '(data) => (data.quote.length > 80 ? ${data.quote.slice(0, 80)}... : data.quote || Error)'
+    target: '(data) => (data.quote.length > 80 ? \\...\ : data.quote || \Error\)'
   },
   typography: {
     class: 'prose text-base',
