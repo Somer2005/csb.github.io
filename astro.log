@@ -1,0 +1,16 @@
+ WARN  The "workspaces" field in package.json is not supported by pnpm. Create a "pnpm-workspace.yaml" file instead.
+
+> astro-theme-pure@4.1.2 dev /home/somer/my-blog
+> astro dev
+
+00:32:45 [types] Generated 2ms
+00:32:45 [content] Syncing content
+00:32:45 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/docs"
+00:32:45 [content] Synced content
+
+ astro  v5.16.12 ready in 1941 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  http://10.255.255.254:4321/
+
+00:32:45 watching for file changes...
