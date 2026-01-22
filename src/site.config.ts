@@ -34,7 +34,7 @@ export const theme: ThemeUserConfig = {
     ]
   },
   footer: {
-    year: \ \\,
+    year: ' 2026',
     links: [
       {
         title: 'Site Policy',
