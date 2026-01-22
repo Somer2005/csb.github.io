@@ -1,7 +1,7 @@
 name: Deploy Astro to GitHub Pages
 on:
   push:
-    branches: [astro-version]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -22,15 +22,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm
 
-      - run: pnpm install
-      - run: pnpm run sync
-      - run: pnpm run build --verbose
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Sync content
+        run: pnpm run sync
+
+      - name: Build Astro
+        run: pnpm run build --verbose
 
       - uses: actions/upload-pages-artifact@v3
         with:
