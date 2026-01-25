@@ -26,7 +26,7 @@ export default defineConfig({
 // [Basic]
   site: 'https://somer2005.github.io',
   base: '/csb.github.io',
-  trailingSlash: 'always',
+  trailingSlash: 'directory',
   server: { host: '0.0.0.0', port: 4321 },
 
   // [Adapter]
