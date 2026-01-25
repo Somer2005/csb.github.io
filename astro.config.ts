@@ -25,7 +25,7 @@ import config from './src/site.config.ts'
 export default defineConfig({
 // [Basic]
   site: 'https://somer2005.github.io',
-  base: '/',
+  base: '/csb.github.io',
   trailingSlash: 'always',
   server: { host: '0.0.0.0', port: 4321 },
 
