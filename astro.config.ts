@@ -24,7 +24,7 @@ import config from './src/site.config.ts'
 // https://astro.build/config
 export default defineConfig({
 // [Basic]
-  site: 'https://somer2005.github.io/csb.github.io',
+  site: 'https://somer2005.github.io',
   base: '/csb.github.io',
   trailingSlash: 'always',
   server: { host: '0.0.0.0', port: 4321 },
