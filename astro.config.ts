@@ -2,8 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel'; // 新版统一导入 @astrojs/vercel
 
-// 👇 新增：修复 virtual:config 虚拟模块的插件（核心）
-// 👇 替换原来的 fixVirtualConfigPlugin 函数
+// 👇 修复 virtual:config 虚拟模块的插件（完整版）
 function fixVirtualConfigPlugin() {
   return {
     name: 'fix-virtual-config',
@@ -12,13 +11,12 @@ function fixVirtualConfigPlugin() {
     },
     load(id) {
       if (id === '\0virtual:config') {
-        // 👇 同时导出默认配置 + 命名配置（兼容所有导入方式）
         return `
           export const config = {
             site: 'https://Somer2005.github.io',
             title: 'Somer2005的博客',
             description: '我的个人博客 RSS 订阅',
-            // 👇 新增 date.ts 需要的 locale 配置（核心！）
+            // date.ts 需要的 locale 配置
             locale: {
               dateLocale: 'zh-CN',
               dateOptions: {
@@ -36,24 +34,33 @@ function fixVirtualConfigPlugin() {
             socialCard: '/social-card.png',
             npmCDN: 'https://cdn.jsdelivr.net/npm'
           };
-          // 👇 支持默认导入（解决 date.ts 报错）
+          // 支持默认导入（解决 date.ts 报错）
           export default config;
         `;
       }
     },
   };
 }
+
+// 👇 Astro 核心配置（包含字体实验功能）
 export default defineConfig({
+  // 新增：启用 Font 组件实验功能（解决 exit code 1）
+  experimental: {
+    assets: {
+      fonts: true
+    }
+  },
+  // 原有配置
   site: 'https://Somer2005.github.io',
   base: '/',
   output: 'static', // 静态输出模式
   integrations: [sitemap()],
-  adapter: vercel(), // 移除 static: true（新版无需配置）
+  adapter: vercel(), // 新版无需 static: true
   // 关闭类型检查（临时）
   typescript: {
     check: false
   },
-  // 👇 新增：加载虚拟模块插件（关键）
+  // 加载虚拟模块插件
   vite: {
     plugins: [fixVirtualConfigPlugin()]
   }
