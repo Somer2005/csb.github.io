@@ -26,7 +26,6 @@ import config from './src/site.config.ts'
 export default defineConfig({
   // [Basic]
   site: "https://Somer2005.github.io",
-  base: "/csb.github.io/",
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
