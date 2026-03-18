@@ -1,13 +1,10 @@
 ---
-title: '多模态RAG项目Day1 Lora微调大模型预备'
-description: 'Write your description here.'
+title: '高等代数复盘1：行列式及其经典方法'
+description: '参考书：谢启鸿《高等代数学》第四版'
 publishDate: '2026-03-18 19:21:44'
 tags:
-  - RAG
-  - Agent
-  - Project
-  - Large Language Model
-  - MiniEssayReadingAgent
+  - 高等代数
+  - 行列式
 ---
 
 
