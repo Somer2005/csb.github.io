@@ -503,3 +503,9 @@ demo.launch(share=True, inline=True)
 * 系统在 PDF 缩略图的多模态向量库基于 Late Interaction 计算召回相似度（比 cosine 相似度更精细），并且利用 Qwen2.5VL 的原生分辨率进行召回图像动态分辨率的 QA 问答。
 
 * 为了提升 Qwen2.5VL 在 PDF 问答上的图表理解能力，我们在 pdfvqa/chartQA 上进行 SFT，并且搭建了基于 DeepSeek-Chat 的 Agent 评测系统，自动化评测 3k+ QA，问答准确率达到 x%，相比基线提高 x%。
+
+
+## 最后写给自己：
+
+RAG模型还需要补充学习的东西包括模型架构，模型训练，模型评估的数据集构造方法，等到论文看完了，就再来继续写。
+
