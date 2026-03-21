@@ -1,6 +1,6 @@
 ---
-title: '多模态RAG项目Day1 Lora微调大模型预备'
-description: 'Write your description here.'
+title: '多模态RAG项目复盘：论文Agent'
+description: '本来还想按Day写日记，结果发现微调了之后，这几把玩意儿后面的RAG部分就纯调包，所以干脆一天完事。'
 publishDate: '2026-03-18 19:21:44'
 tags:
   - RAG
@@ -12,6 +12,10 @@ tags:
 
 今天开始构建我的第一个Agent项目。这个项目其实是有点老了的项目了，2025年9月的项目，现在是2026年3月了，半年前的老项目，实在是太老了。
 但是作为一个练手项目足够了，AI大潮来袭，还是要做点什么。
+
+RAG的基础其实就是给基础模型加了一个知识库，这个知识库可以是文本，也可以是图片等，然后模型根据用户的问题，从知识库中提取相关信息，最后返回给用户。
+
+提取相关信息的方法有很多，比如我这里用的Colpali模型就是基于向量检索的方法，然后再用重排模型对检索结果进行排序。
 
 ## 基础准备
 ### 基座模型选择
@@ -238,3 +242,264 @@ trainer.save_model("./qwen35-2b-final")
 
 今天做完了微调部分，明天开始做RAG部分。
 
+
+## 其次，切知识库数据！
+
+切知识库数据使用的是这样的代码：
+
+```
+import os
+from tqdm import tqdm
+from pdf2image import convert_from_path
+
+# ========== 工具函数 ==========
+def save_images_to_local(dataset, index, output_folder):
+    os.makedirs(output_folder, exist_ok=True)
+
+    for i, item in enumerate(dataset):
+        image = item[index]
+        image_path = os.path.join(output_folder, f"{index}_{i}.png")
+        image.save(image_path)
+
+
+# ========== 主函数 ==========
+def pdf_folder_to_images(
+    input_folder: str,
+    output_folder: str = "data/mrag/images",
+    dpi: int = 300,
+    index_name: str = "page",
+):
+    """
+    Args:
+        input_folder (str): 存放 pdf 的文件夹
+        output_folder (str): 图片输出目录
+        dpi (int): 转图分辨率
+        index_name (str): 索引键
+    """
+    dataset = []
+
+    pdf_files = [
+        f for f in os.listdir(input_folder)
+        if f.lower().endswith(".pdf")
+    ]
+
+    for pdf_file in tqdm(pdf_files, desc="converting pdf pages"):
+        pdf_path = os.path.join(input_folder, pdf_file)
+
+        try:
+            pages = convert_from_path(pdf_path, dpi=dpi)
+        except Exception as e:
+            print(f"{pdf_file} 转换失败: {e}")
+            continue
+
+        dataset.extend([{index_name: page} for page in pages])
+
+    save_images_to_local(
+        dataset,
+        index=index_name,
+        output_folder=output_folder
+    )
+
+
+# ========== 程序入口 ==========
+if __name__ == "__main__":
+    pdf_folder_to_images(
+        input_folder="pdfs",        # 你的PDF目录
+        output_folder="images",     # 输出目录
+        dpi=300
+    )
+```
+
+我们使用PDF2image包来切割，切割完成后，就可以打包上传Kaggle了。
+
+## 开始RAG部分。
+
+RAG部分主要拆为三大阶段，分别是召回阶段，重排阶段以及用我们微调好的模型做生成。
+
+### 召回阶段
+
+召回阶段选择的模型是https://huggingface.co/vidore/colqwen2-v0.1，这个模型的架构是Colpali，基座模型是Qwen2，有空的话我会写一个这个架构的详细笔记。
+
+```
+class ColPali(PaliGemmaPreTrainedModel):
+    def __init__(self, config: PaliGemmaConfig, mask_non_image_embeddings: bool = False):
+        super().__init__(config=config)
+        model = PaliGemmaForConditionalGeneration(config=config)
+        self.model = model
+        self.dim = 128
+        self.custom_text_proj = nn.Linear(self.model.config.text_config.hidden_size, self.dim)
+        self.mask_non_image_embeddings = mask_non_image_embeddings
+        self.post_init()
+
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        outputs = self.model(*args, output_hidden_states=True, **kwargs)
+        last_hidden_states = outputs.hidden_states[-1]  # (batch_size, sequence_length, hidden_size)
+        proj = self.custom_text_proj(last_hidden_states)  # (batch_size, sequence_length, dim)
+
+        # L2 normalization
+        proj = proj / proj.norm(dim=-1, keepdim=True)  # (batch_size, sequence_length, dim)
+        proj = proj * kwargs["attention_mask"].unsqueeze(-1)  # (batch_size, sequence_length, dim)
+
+        if "pixel_values" in kwargs and self.mask_non_image_embeddings:
+            # Pools only the image embeddings
+            image_mask = (kwargs["input_ids"] == self.config.image_token_index).unsqueeze(-1)
+            proj = proj * image_mask
+
+        return proj
+```
+
+实战中我们将选择调包！
+
+### 重排阶段
+
+重排模型选择MonoT5，具体依旧调包！
+
+### 代码实现
+
+在Kaggle中继续添加如下代码块：
+
+```
+# 安装 pdf 处理工具、视觉检索库、交互 UI 库
+!apt-get update && apt-get install -y poppler-utils
+!pip install byaldi pdf2image gradio peft transformers datasets
+```
+
+然后开始调包！（注释AI写的，真的比我详细）
+
+```
+import os
+import torch
+from PIL import Image
+from transformers import AutoProcessor, AutoModelForCausalLM
+from peft import PeftModel
+from byaldi import RAGMultiModalModel
+import gradio as gr
+
+# ==========================================
+# 1. 路径定义 (严格匹配你的 Kaggle 数据结构)
+# ==========================================
+IMAGE_PATH = "/kaggle/input/datasets/somerchen/651655"
+ADAPTER_PATH = "/kaggle/input/datasets/somerchen/123456/qwen35-2b-final"
+BASE_MODEL_ID = "Qwen/Qwen3.5-2B"
+
+# ==========================================
+# 2. 初始化视觉检索大脑 (ColQwen2)
+# ==========================================
+print("🧠 正在初始化 ColQwen2 视觉检索引擎...")
+retrieval_model = RAGMultiModalModel.from_pretrained("vidore/colqwen2-v1.0", device="cuda:0")
+
+print("🔍 正在对论文截图进行视觉索引...")
+retrieval_model.index(
+    input_path=IMAGE_PATH,
+    index_name="paper_db",
+    store_collection_with_index=False,
+    overwrite=True
+)
+
+# ==========================================
+# 3. 加载生成大脑 (Base + LoRA)
+# ==========================================
+print("🤖 正在加载微调模型...")
+processor = AutoProcessor.from_pretrained(BASE_MODEL_ID)
+base_model = AutoModelForCausalLM.from_pretrained(
+    BASE_MODEL_ID,
+    torch_dtype=torch.float16,
+    device_map="cuda:1"
+)
+model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
+model.eval()
+
+# ==========================================
+# 4. Agent 核心问答链路 (修复了路径报错)
+# ==========================================
+def paper_agent_qa(query):
+    # 【Step 1: 视觉检索】
+    results = retrieval_model.search(query, k=2)
+    
+    retrieved_images = []
+    page_names = []
+    
+    for res in results:
+        # --- 核心修复逻辑开始 ---
+        # 尝试从 metadata 中获取原始文件名或路径
+        # byaldi 的 Result 对象通常在 metadata 中存储 'doc_id' (文件名)
+        raw_id = res.metadata.get('doc_id') or res.doc_id
+        
+        if isinstance(raw_id, int):
+            # 如果还是整数，说明 metadata 里没存文件名，这通常不应该发生
+            # 报错提示我们需要手动映射，但通常 raw_id 应该是文件名字符串
+            print(f"警告: 检索到的 ID 为整数 {raw_id}，尝试查找文件...")
+            # 备选方案：获取文件夹内文件列表按索引取（不推荐，除非万不得已）
+            all_files = sorted([f for f in os.listdir(IMAGE_PATH) if f.endswith(('.png', '.jpg'))])
+            img_filename = all_files[raw_id] if raw_id < len(all_files) else ""
+        else:
+            img_filename = str(raw_id)
+
+        # 拼接成绝对路径
+        if not os.path.isabs(img_filename):
+            full_img_path = os.path.join(IMAGE_PATH, os.path.basename(img_filename))
+        else:
+            full_img_path = img_filename
+        # --- 核心修复逻辑结束 ---
+
+        try:
+            img = Image.open(full_img_path).convert("RGB")
+            retrieved_images.append(img)
+            page_names.append(os.path.basename(full_img_path))
+        except Exception as e:
+            print(f"无法打开图片 {full_img_path}: {e}")
+
+    if not retrieved_images:
+        return "未能检索到相关页面或图片无法读取。", [], ""
+
+    # 【Step 2: 理解生成】
+    prompt = f"你是一个专业的论文助教，请结合提供的图片准确回答。问题：{query}"
+    content = [{"type": "image"} for _ in retrieved_images] + [{"type": "text", "text": prompt}]
+    messages = [{"role": "user", "content": content}]
+    
+    text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    
+    inputs = processor(
+        text=[text], 
+        images=retrieved_images, 
+        return_tensors="pt",
+        max_pixels=320*28*28 
+    ).to(model.device)
+    
+    with torch.no_grad():
+        generated_ids = model.generate(**inputs, max_new_tokens=300)
+        output_ids = generated_ids[0][inputs.input_ids.shape[1]:]
+        answer = processor.decode(output_ids, skip_special_tokens=True)
+    
+    return answer, retrieved_images, f"参考页面: {', '.join(page_names)}"
+
+# ==========================================
+# 5. 构建 Gradio 界面 (保持不变)
+# ==========================================
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    gr.Markdown("# 📑 论文视觉阅读智能体 (修复版)")
+    with gr.Row():
+        with gr.Column(scale=1):
+            query_box = gr.Textbox(label="输入问题")
+            ask_btn = gr.Button("🧠 思考回答", variant="primary")
+            ref_info = gr.Markdown()
+        with gr.Column(scale=2):
+            ans_box = gr.Textbox(label="Agent 回答", lines=10)
+            img_gallery = gr.Gallery(label="参考页面截图", columns=2)
+            
+    ask_btn.click(fn=paper_agent_qa, inputs=query_box, outputs=[ans_box, img_gallery, ref_info])
+
+demo.launch(share=True, inline=True)
+```
+
+
+**于是，我们实现了RAG agent。**
+
+## 简历写法：
+
+
+* 为了解决传统 RAG 系统 OCR + 文本分块带来的处理时间长、召回结果差、只能利用文本 embedding 召回的问题，我们构建了基于 Qwen2.5VL 的多模态能力的原生 PDF 截图的嵌入-召回-问答 pipeline。
+
+* 系统在 PDF 缩略图的多模态向量库基于 Late Interaction 计算召回相似度（比 cosine 相似度更精细），并且利用 Qwen2.5VL 的原生分辨率进行召回图像动态分辨率的 QA 问答。
+
+* 为了提升 Qwen2.5VL 在 PDF 问答上的图表理解能力，我们在 pdfvqa/chartQA 上进行 SFT，并且搭建了基于 DeepSeek-Chat 的 Agent 评测系统，自动化评测 3k+ QA，问答准确率达到 x%，相比基线提高 x%。
