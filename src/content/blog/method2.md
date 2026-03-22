@@ -6,6 +6,6 @@ tags:
   - 考研方法积累
   - 数学证明
   - 极限证明
-heroImage: { src: './thumbnail.jpg', color: '#D58388' }
+
 language: 'zh-CN'
 ---
