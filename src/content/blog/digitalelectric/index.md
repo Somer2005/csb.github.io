@@ -6,7 +6,6 @@ tags:
   - 一生一芯计划
   - 数字电路
 language: 'zh-CN'
-heroImage: { src: './thumbnail.jpg', color: '#D58388' }
 ---
 
 # 数字电路基础
@@ -104,7 +103,8 @@ heroImage: { src: './thumbnail.jpg', color: '#D58388' }
 
 译码器的实现如下图：
 
-![alt text](./decoder1.png)
+![alt text](./decoder1.jpg)
+
 
 !!!note "译码器的构建思路"
     译码器的构建思路相对简单，是利用与门进行操作的，这个想法非常自然：**我希望能够用4个不同的1的位置表示出不同的2进制4个数字的输入，我只有两个输入，我添加与门并进行组合我就有了四个输入，要让这个东西受我控制，自然引入与门。**
