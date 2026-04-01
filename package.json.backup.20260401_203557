@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
-    "build": "astro build",
+    "build": "astro-pure check && astro check && astro build",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
@@ -43,11 +43,5 @@
     "eslint-plugin-astro": "^1.6.0",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1"
-  },
-  "overrides": {
-    "@types/hast": "^3.0.4"
-  },
-  "resolutions": {
-    "@types/hast": "^3.0.4"
   }
 }
