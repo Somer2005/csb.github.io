@@ -4,6 +4,7 @@
   "compilerOptions": {
     // Basic
     "allowJs": true,
+    "skipLibCheck": true,
     // Building for a library
     "declaration": true,
     // Code runs in the DOM
