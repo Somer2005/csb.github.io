@@ -48,7 +48,7 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
     .use(remarkReplaceImageLink)
     .use(remarkRehype)
     .use(rehypeStringify)
-    .process(post.body)
+    .process(post.body as string)
 
   return String(file)
 }
