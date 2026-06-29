@@ -1,4 +1,4 @@
-import type { Nodes, Root } from 'mdast'
+import type { Image, Root } from 'mdast'
 import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 
@@ -9,7 +9,7 @@ import getReadingTime from '../utils/reading-time'
 export const remarkAddZoomable: Plugin<[{ className?: string }], Root> =
   ({ className = 'zoomable' }) =>
   (tree) => {
-    visit(tree, 'image', (node: Node) => {
+    visit(tree, 'image', (node: Image) => {
       node.data = { hProperties: { class: className } }
     })
   }
