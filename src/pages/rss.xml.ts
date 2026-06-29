@@ -43,7 +43,7 @@ const renderContent = async (post: CollectionEntry<'blog'>, site: URL) => {
     }
   }
 
-  const file = await unified()
+  const file = await (unified() as any)
     .use(remarkParse)
     .use(remarkReplaceImageLink)
     .use(remarkRehype)

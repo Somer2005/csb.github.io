@@ -1,4 +1,5 @@
 import type { Element } from 'hast'
+import type { VFile } from 'vfile'
 import { select } from 'hast-util-select'
 import { rehype } from 'rehype'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
@@ -51,7 +52,7 @@ const getIDs = () => {
 const tabsProcessor = rehype()
   .data('settings', { fragment: true })
   .use(function tabs() {
-    return (tree: Element, file) => {
+    return (tree: Element, file: VFile) => {
       file.data.panels = []
       let isFirst = true
       visit(tree, 'element', (node) => {
@@ -101,11 +102,11 @@ const tabsProcessor = rehype()
  * each tab panel correctly.
  * @param html Inner HTML passed to the `<Tabs>` component.
  */
-export const processPanels = (html: string) => {
+export const processPanels = (html: string): { panels: Panel[]; html: string } => {
   const file = tabsProcessor.processSync({ value: html })
   return {
     /** Data for each tab panel. */
-    panels: file.data.panels,
+    panels: (file.data.panels as Panel[] | undefined) ?? [],
     /** Processed HTML for the tab panels. */
     html: file.toString()
   }

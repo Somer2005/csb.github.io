@@ -48,6 +48,7 @@
         "prettier-plugin-astro": "^0.14.1"
     },
     "overrides": {
-        "@types/hast": "3.0.4"
+        "@types/hast": "3.0.4",
+        "@types/mdast": "4.0.4"
     }
 }
