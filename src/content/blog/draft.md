@@ -1,13 +1,12 @@
 ---
-title: 'Draft Page'
-publishDate: '2025-07-03'
-updatedDate: '2025-07-10'
-description: 'Draft page for any purpose'
+title: '日记：2026年'
+publishDate: '2026-06-27'
+updatedDate: 'UNKNOWN'
+description: '用于简单的每日记录和复盘？'
 tags:
-  - Draft
-language: 'English'
-# Remove or set false to turn draft page into normal ones
-draft: true
+  - Diary
+language: 'Chinese'
+
 ---
 
 # 2026.6.27
